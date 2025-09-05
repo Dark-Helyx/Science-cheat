@@ -1,0 +1,173 @@
+import React, { useState } from 'react';
+
+// Periodic Element Lookup
+// Single-file React component. Paste into a React project (e.g. Vite/Next) and render <PeriodicLookup />.
+
+const elements = [
+  { number: 1, symbol: 'H', name: 'Hydrogen', atomic_mass: 1.008, group: 1, period: 1, category: 'Nonmetal', electron_configuration: '1s1', electronegativity: 2.20, density: 0.00008988, melting_c: -259.14, boiling_c: -252.87, summary: 'Lightest element' },
+  { number: 2, symbol: 'He', name: 'Helium', atomic_mass: 4.002602, group: 18, period: 1, category: 'Noble gas', electron_configuration: '1s2', electronegativity: null, density: 0.0001785, melting_c: null, boiling_c: -268.93, summary: 'Noble gas, inert' },
+  { number: 3, symbol: 'Li', name: 'Lithium', atomic_mass: 6.94, group: 1, period: 2, category: 'Alkali metal', electron_configuration: '[He] 2s1', electronegativity: 0.98, density: 0.534, melting_c: 180.54, boiling_c: 1342, summary: 'Soft, silvery metal' },
+  { number: 4, symbol: 'Be', name: 'Beryllium', atomic_mass: 9.0121831, group: 2, period: 2, category: 'Alkaline earth metal', electron_configuration: '[He] 2s2', electronegativity: 1.57, density: 1.85, melting_c: 1287, boiling_c: 2469, summary: 'Hard, brittle metal' },
+  { number: 5, symbol: 'B', name: 'Boron', atomic_mass: 10.81, group: 13, period: 2, category: 'Metalloid', electron_configuration: '[He] 2s2 2p1', electronegativity: 2.04, density: 2.34, melting_c: 2075, boiling_c: 4000, summary: 'Hard, black-brown metalloid' },
+  { number: 6, symbol: 'C', name: 'Carbon', atomic_mass: 12.011, group: 14, period: 2, category: 'Nonmetal', electron_configuration: '[He] 2s2 2p2', electronegativity: 2.55, density: 2.267, melting_c: 3550, boiling_c: 4827, summary: 'Basis of organic life' },
+  { number: 7, symbol: 'N', name: 'Nitrogen', atomic_mass: 14.007, group: 15, period: 2, category: 'Nonmetal', electron_configuration: '[He] 2s2 2p3', electronegativity: 3.04, density: 0.0012506, melting_c: -210.00, boiling_c: -195.79, summary: 'Makes up ~78% of air' },
+  { number: 8, symbol: 'O', name: 'Oxygen', atomic_mass: 15.999, group: 16, period: 2, category: 'Nonmetal', electron_configuration: '[He] 2s2 2p4', electronegativity: 3.44, density: 0.001429, melting_c: -218.79, boiling_c: -182.95, summary: 'Essential for respiration' },
+  { number: 9, symbol: 'F', name: 'Fluorine', atomic_mass: 18.998403163, group: 17, period: 2, category: 'Halogen', electron_configuration: '[He] 2s2 2p5', electronegativity: 3.98, density: 0.001696, melting_c: -219.67, boiling_c: -188.11, summary: 'Most reactive nonmetal' },
+  { number: 10, symbol: 'Ne', name: 'Neon', atomic_mass: 20.1797, group: 18, period: 2, category: 'Noble gas', electron_configuration: '[He] 2s2 2p6', electronegativity: null, density: 0.0008999, melting_c: -248.59, boiling_c: -246.08, summary: 'Noble gas used in signs' },
+  { number: 11, symbol: 'Na', name: 'Sodium', atomic_mass: 22.98976928, group: 1, period: 3, category: 'Alkali metal', electron_configuration: '[Ne] 3s1', electronegativity: 0.93, density: 0.971, melting_c: 97.79, boiling_c: 883, summary: 'Soft, reactive metal' },
+  { number: 12, symbol: 'Mg', name: 'Magnesium', atomic_mass: 24.305, group: 2, period: 3, category: 'Alkaline earth metal', electron_configuration: '[Ne] 3s2', electronegativity: 1.31, density: 1.738, melting_c: 650, boiling_c: 1090, summary: 'Light structural metal' },
+  { number: 13, symbol: 'Al', name: 'Aluminium', atomic_mass: 26.9815385, group: 13, period: 3, category: 'Post-transition metal', electron_configuration: '[Ne] 3s2 3p1', electronegativity: 1.61, density: 2.70, melting_c: 660.32, boiling_c: 2470, summary: 'Light, corrosion-resistant' },
+  { number: 14, symbol: 'Si', name: 'Silicon', atomic_mass: 28.085, group: 14, period: 3, category: 'Metalloid', electron_configuration: '[Ne] 3s2 3p2', electronegativity: 1.90, density: 2.33, melting_c: 1414, boiling_c: 3265, summary: 'Semiconductor staple' },
+  { number: 15, symbol: 'P', name: 'Phosphorus', atomic_mass: 30.973761998, group: 15, period: 3, category: 'Nonmetal', electron_configuration: '[Ne] 3s2 3p3', electronegativity: 2.19, density: 1.823, melting_c: 44.15, boiling_c: 280.5, summary: 'Vital for DNA/RNA' },
+  { number: 16, symbol: 'S', name: 'Sulfur', atomic_mass: 32.06, group: 16, period: 3, category: 'Nonmetal', electron_configuration: '[Ne] 3s2 3p4', electronegativity: 2.58, density: 2.07, melting_c: 115.21, boiling_c: 445.86, summary: 'Yellow, smells like rotten eggs' },
+  { number: 17, symbol: 'Cl', name: 'Chlorine', atomic_mass: 35.45, group: 17, period: 3, category: 'Halogen', electron_configuration: '[Ne] 3s2 3p5', electronegativity: 3.16, density: 0.003214, melting_c: -101.5, boiling_c: -34.04, summary: 'Disinfectant in water treatment' },
+  { number: 18, symbol: 'Ar', name: 'Argon', atomic_mass: 39.948, group: 18, period: 3, category: 'Noble gas', electron_configuration: '[Ne] 3s2 3p6', electronegativity: null, density: 0.0017837, melting_c: -189.34, boiling_c: -185.85, summary: 'Common inert gas' },
+  { number: 19, symbol: 'K', name: 'Potassium', atomic_mass: 39.0983, group: 1, period: 4, category: 'Alkali metal', electron_configuration: '[Ar] 4s1', electronegativity: 0.82, density: 0.856, melting_c: 63.5, boiling_c: 759, summary: 'Very reactive with water' },
+  { number: 20, symbol: 'Ca', name: 'Calcium', atomic_mass: 40.078, group: 2, period: 4, category: 'Alkaline earth metal', electron_configuration: '[Ar] 4s2', electronegativity: 1.00, density: 1.55, melting_c: 842, boiling_c: 1484, summary: 'Essential for bones' },
+  { number: 26, symbol: 'Fe', name: 'Iron', atomic_mass: 55.845, group: 8, period: 4, category: 'Transition metal', electron_configuration: '[Ar] 4s2 3d6', electronegativity: 1.83, density: 7.874, melting_c: 1538, boiling_c: 2862, summary: 'Steel's main ingredient' },
+  { number: 29, symbol: 'Cu', name: 'Copper', atomic_mass: 63.546, group: 11, period: 4, category: 'Transition metal', electron_configuration: '[Ar] 4s1 3d10', electronegativity: 1.90, density: 8.96, melting_c: 1084.62, boiling_c: 2562, summary: 'Excellent conductor' },
+  { number: 47, symbol: 'Ag', name: 'Silver', atomic_mass: 107.8682, group: 11, period: 5, category: 'Transition metal', electron_configuration: '[Kr] 5s1 4d10', electronegativity: 1.93, density: 10.49, melting_c: 961.78, boiling_c: 2162, summary: 'Highest electrical conductivity' },
+  { number: 79, symbol: 'Au', name: 'Gold', atomic_mass: 196.966569, group: 11, period: 6, category: 'Transition metal', electron_configuration: '[Xe] 6s1 4f14 5d10', electronegativity: 2.54, density: 19.32, melting_c: 1064.18, boiling_c: 2700, summary: 'Precious, malleable, inert' },
+  { number: 53, symbol: 'I', name: 'Iodine', atomic_mass: 126.90447, group: 17, period: 5, category: 'Halogen', electron_configuration: '[Kr] 5s2 4d10 5p5', electronegativity: 2.66, density: 4.93, melting_c: 113.7, boiling_c: 184.3, summary: 'Essential trace element' },
+  { number: 82, symbol: 'Pb', name: 'Lead', atomic_mass: 207.2, group: 14, period: 6, category: 'Post-transition metal', electron_configuration: '[Xe] 6s2 4f14 5d10 6p2', electronegativity: 2.33, density: 11.34, melting_c: 327.5, boiling_c: 1749, summary: 'Toxic heavy metal' },
+  { number: 8.5, symbol: 'Xx', name: 'Fictionium', atomic_mass: 999, group: null, period: null, category: 'Fictional', electron_configuration: '', electronegativity: null, density: null, melting_c: null, boiling_c: null, summary: 'For demo and error cases' }
+];
+
+export default function PeriodicLookup() {
+  const [query, setQuery] = useState('');
+  const [result, setResult] = useState(null);
+  const [message, setMessage] = useState('Type an element symbol (e.g. Fe), name (iron), atomic number (26), or atomic mass (55.845)');
+
+  const handleLookup = (raw) => {
+    const q = raw.trim();
+    if (!q) {
+      setResult(null);
+      setMessage('Please enter something. Even "unobtanium" will do (but won\'t return a result).');
+      return;
+    }
+
+    // Check for exact symbol (case-insensitive)
+    const bySymbol = elements.find(el => el.symbol.toLowerCase() === q.toLowerCase());
+    if (bySymbol) { setResult(bySymbol); setMessage('Found by symbol.'); return; }
+
+    // Check for exact name
+    const byName = elements.find(el => el.name.toLowerCase() === q.toLowerCase());
+    if (byName) { setResult(byName); setMessage('Found by name.'); return; }
+
+    // Numeric check: integer -> atomic number. float -> atomic mass (approx search)
+    const asNumber = Number(q);
+    if (!Number.isNaN(asNumber)) {
+      if (Number.isInteger(asNumber)) {
+        const byNumber = elements.find(el => el.number === asNumber);
+        if (byNumber) { setResult(byNumber); setMessage('Found by atomic number.'); return; }
+      }
+
+      // atomic mass search: find closest within tolerance
+      const tolerance = 0.5; // allow slight rounding differences
+      const byMass = elements.reduce((best, el) => {
+        if (!el.atomic_mass) return best;
+        const diff = Math.abs(el.atomic_mass - asNumber);
+        if (diff <= tolerance && (best === null || diff < Math.abs(best.atomic_mass - asNumber))) return el;
+        return best;
+      }, null);
+      if (byMass) { setResult(byMass); setMessage('Found by atomic mass (approx).'); return; }
+    }
+
+    // Partial symbol/name fuzzy: startsWith
+    const partial = elements.find(el => el.symbol.toLowerCase().startsWith(q.toLowerCase()) || el.name.toLowerCase().startsWith(q.toLowerCase()));
+    if (partial) { setResult(partial); setMessage('Partial match.'); return; }
+
+    setResult(null);
+    setMessage('No element found. Try symbol, name, atomic number, or atomic mass. Or blame chemistry.');
+  };
+
+  const onSubmit = (e) => { e.preventDefault(); handleLookup(query); };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 flex items-start justify-center">
+      <div className="max-w-3xl w-full">
+        <header className="mb-6">
+          <h1 className="text-3xl font-extrabold">Periodic Element Lookup 🔬✨</h1>
+          <p className="mt-2 text-sm text-slate-600">Enter a symbol, name, atomic number or mass and the site will show smart details. Try <code>Fe</code>, <code>26</code>, or <code>55.845</code>.</p>
+        </header>
+
+        <form onSubmit={onSubmit} className="flex gap-2 mb-4">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="e.g. Fe, iron, 26, 55.845"
+            className="flex-1 p-3 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
+          />
+          <button className="px-4 py-2 rounded-lg bg-sky-600 text-white font-semibold hover:bg-sky-700">Lookup</button>
+        </form>
+
+        <div className="mb-4 text-sm text-slate-700">{message}</div>
+
+        {result ? (
+          <article className="p-4 rounded-2xl bg-white shadow-md border border-slate-100">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold">{result.name} <span className="text-lg text-slate-500">({result.symbol})</span></h2>
+                <div className="text-sm text-slate-600">Atomic number: <strong>{result.number}</strong> • Atomic mass: <strong>{result.atomic_mass}</strong></div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-slate-500">Category</div>
+                <div className="mt-1 rounded-md px-3 py-1 border inline-block">{result.category}</div>
+              </div>
+            </div>
+
+            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm text-slate-700">
+              <div>
+                <dt className="text-xs text-slate-500">Electron configuration</dt>
+                <dd>{result.electron_configuration || '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Electronegativity</dt>
+                <dd>{result.electronegativity ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Density (g/cm³)</dt>
+                <dd>{result.density ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Group / Period</dt>
+                <dd>{result.group ?? '—'} / {result.period ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Melting / Boiling (°C)</dt>
+                <dd>{result.melting_c ?? '—'} / {result.boiling_c ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Fun fact</dt>
+                <dd>{result.summary}</dd>
+              </div>
+            </dl>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => navigator.clipboard.writeText(JSON.stringify(result, null, 2))}
+                className="px-3 py-2 border rounded-md text-sm">
+                Copy JSON
+              </button>
+              <button
+                onClick={() => {
+                  const csv = Object.entries(result).map(([k,v]) => `${k},"${String(v).replace(/"/g,'""') }"`).join('\n');
+                  const blob = new Blob([csv], { type: 'text/csv' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url; a.download = `${result.symbol || result.name}.csv`; a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-3 py-2 border rounded-md text-sm">Download CSV</button>
+            </div>
+
+          </article>
+        ) : (
+          <div className="p-6 rounded-xl border border-dashed border-slate-200 text-slate-500">No result yet. Give it a try — science awaits (and so do puns).</div>
+        )}
+
+        <footer className="mt-6 text-xs text-slate-500">Tip: numeric integers are treated as atomic numbers; decimal numbers are treated as atomic masses (approx). Partial matches supported.</footer>
+      </div>
+    </div>
+  );
+}
